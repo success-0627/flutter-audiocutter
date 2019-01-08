@@ -1,6 +1,6 @@
 # audiocutter
 
- A plugin to cut audio files.
+ A plugin to cut audio files. You
 
 ## Getting Started
 
