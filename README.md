@@ -1,6 +1,6 @@
 # audiocutter
 
-A new flutter plugin project.
+ A plugin to cut audio files.
 
 ## Getting Started
 
