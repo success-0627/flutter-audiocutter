@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Update path provider dependency.
+
 ## 0.0.2
 
 * Implements a class with a static method to cut audio.
