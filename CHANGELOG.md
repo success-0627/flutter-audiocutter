@@ -1,3 +1,11 @@
+## 0.0.5
+
+* Require and use ffmpeg to clip audio.
+
+## 0.0.4
+
+* I have no idea what I'm doing.
+
 ## 0.0.3
 
 * Update path provider dependency.
