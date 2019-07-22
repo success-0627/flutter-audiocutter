@@ -1,35 +1,27 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:audiocutter_example/player.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
-
 import 'package:audiocutter/audiocutter.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:stereo/stereo.dart';
 
-void main() => runApp(MyApp());
+import 'player.dart';
 
-class MyApp extends StatefulWidget {
+typedef void OnError(Exception exception);
+
+void main() => runApp(ExampleApp());
+
+class ExampleApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _ExampleAppState createState() => _ExampleAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  Stereo _player = new Stereo();
+class _ExampleAppState extends State<ExampleApp> {
+  Future<String> _url;
+  String _cutFilePath;
   final audioFileStartController = TextEditingController();
   final audioFileEndController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Load song from assets folder.
-    _copyAssetAudioToLocalDir().then((path) {
-      _loadPathToPlayer(path);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +37,27 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Load song from assets folder.
+    _url = _copyAssetAudioToLocalDir();
+  }
+
   Widget audioCutter(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(32.0),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
+        FutureBuilder<String>(
+          future: _url,
+          builder: (context, AsyncSnapshot<String> snapshot) {
+            if (snapshot.hasData) {
+              return MediaPlayerWidget(url: snapshot.data, isLocal: true);
+            }
+            return Container();
+          },
+        ),
         TextField(
           autofocus: true,
           keyboardType: TextInputType.number,
@@ -65,8 +74,15 @@ class _MyAppState extends State<MyApp> {
         ),
         OutlineButton(
             borderSide:
-                BorderSide(color: Theme.of(context).primaryColor, width: 2.0),
-            onPressed: _cutSong,
+            BorderSide(color: Theme
+                .of(context)
+                .primaryColor, width: 2.0),
+            onPressed: () async {
+              var path = await _cutSong();
+              setState(() {
+                _cutFilePath = path;
+              });
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -77,27 +93,15 @@ class _MyAppState extends State<MyApp> {
                 Text('Cut Song'),
               ],
             ),
-            textColor: Theme.of(context).primaryColor,
-            color: Theme.of(context).primaryColor),
-        MediaPlayerWidget(),
-        MaterialButton(
-            onPressed: () {
-              _copyAssetAudioToLocalDir().then((path) {
-                _loadPathToPlayer(path);
-              });
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.refresh),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text('Reload Full Song'),
-              ],
-            ),
-            textColor: Colors.white,
-            color: Theme.of(context).primaryColor),
+            textColor: Theme
+                .of(context)
+                .primaryColor,
+            color: Theme
+                .of(context)
+                .primaryColor),
+        _cutFilePath == null
+            ? Container()
+            : MediaPlayerWidget(url: _cutFilePath, isLocal: true),
       ]),
     );
   }
@@ -110,50 +114,26 @@ class _MyAppState extends State<MyApp> {
   /// Also loads the cut song so you can listen to your new creation!
   ///
   /// Happy cutting!
-  Future _cutSong() async {
+  Future<String> _cutSong() async {
     var start = audioFileStartController.text;
     var end = audioFileEndController.text;
     String path = await _copyAssetAudioToLocalDir();
 
-    // Get bytes of audio.
-    // So this is the part where one actually uses the AudioCutter. In the
-    // future I will hopefully use the metadata directly from the audio. I just
-    // haven't figured that out yet :D.
-    final cutBytes = await AudioCutter.cutAudio(
-        path, double.parse(start), double.parse(end), _player.duration);
+    // Close the keyboard.
+    FocusScope.of(context).requestFocus(FocusNode());
 
-    // Save to local dir.
-    final Directory dir = await getApplicationDocumentsDirectory();
-    final newPath = '${dir.path}/cut-hey.mp3';
-    final File cutAudio = new File(newPath);
-
-    await cutAudio.writeAsBytes(cutBytes, flush: true);
-
-    // Load the cut audio.
-    _loadPathToPlayer(newPath);
-  }
-
-  /// Loads the audio from [path] to the player to be available for playback.
-  Future _loadPathToPlayer(String path) async {
-    try {
-      await _player.load(path);
-    } on StereoFileNotPlayableException {
-      var alert = new AlertDialog(
-          title: new Text('File not playable'),
-          content: new Text('The file you specified is not playable.'));
-
-      showDialog(context: context, child: alert);
-    }
+    return await AudioCutter.cutAudio(
+        path, double.parse(start), double.parse(end));
   }
 
   /// Copies the asset audio to the local app dir to be used elsewhere.
-  Future _copyAssetAudioToLocalDir() async {
+  Future<String> _copyAssetAudioToLocalDir() async {
     final Directory dir = await getApplicationDocumentsDirectory();
-    final path = '${dir.path}/bensound-hey.mp3';
+    final path = '${dir.path}/bensound-sunny.mp3';
     final File song = new File(path);
 
     if (!(await song.exists())) {
-      final data = await rootBundle.load('assets/bensound-hey.mp3');
+      final data = await rootBundle.load('assets/bensound-sunny.mp3');
       final bytes = data.buffer.asUint8List();
       await song.writeAsBytes(bytes, flush: true);
     }
