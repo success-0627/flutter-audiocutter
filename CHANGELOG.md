@@ -1,3 +1,8 @@
+## 0.0.6
+
+* Hot fixes to actually enable this plugin being published with ffmpeg
+* Reduce quality of cut audio to optimize storage and streaming
+
 ## 0.0.5
 
 * Require and use ffmpeg to clip audio.
