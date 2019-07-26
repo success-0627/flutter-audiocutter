@@ -1,3 +1,7 @@
+## 0.0.7
+
+* AndroidX fixes
+
 ## 0.0.6
 
 * Hot fixes to actually enable this plugin being published with ffmpeg
