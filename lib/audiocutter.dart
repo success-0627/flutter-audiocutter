@@ -34,7 +34,8 @@ class AudioCutter {
 
     final Directory dir = await getTemporaryDirectory();
     final outPath = "${dir.path}/output.mp3";
-    var cmd = "-y -i \"$path\" -vn -ss $start -to $end -ar 16k -ac 2 -b:a 96k -acodec libmp3lame $outPath";
+    var cmd =
+        "-y -i \"$path\" -vn -ss $start -to $end -ar 16k -ac 2 -b:a 96k -acodec libmp3lame $outPath";
     int rc = await _flutterFFmpeg.execute(cmd);
 
     if (rc != 0) {

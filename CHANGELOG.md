@@ -1,3 +1,7 @@
+## 0.0.9
+
+* Minor cleanup
+
 ## 0.0.8
 
 * Add fix to allow passing filenames with spaces

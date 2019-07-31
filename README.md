@@ -1,12 +1,12 @@
 # audiocutter
 
  A plugin to cut audio files. You pass in a path to a file, start and end times and the plugin will
- do the rest
+ do the rest. For now, it automatically will reduce the quality quite a bit to ensure optimal file size for storage/streaming.
 
 ## Getting Started
 
 0. Take a look at the requirements and any gotchas for your platform at the [flutter_ffmpeg](https://pub.dev/packages/flutter_ffmpeg)
-package page. There can be some stumbling blocks getting it working on iOS. (Works on my machine ¯\_(ツ)_/¯)
+package page. There can be some stumbling blocks getting it working on iOS. (Works on my machine ¯\\\_(ツ)_/¯)
 
 1. Import and cut!
 
