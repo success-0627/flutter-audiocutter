@@ -1,3 +1,7 @@
+## 0.0.8
+
+* Add fix to allow passing filenames with spaces
+
 ## 0.0.7
 
 * AndroidX fixes

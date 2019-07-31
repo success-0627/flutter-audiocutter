@@ -1,6 +1,6 @@
 name: audiocutter
 description: A plugin to cut audio files. Supports iOS and Android.
-version: 0.0.7
+version: 0.0.8
 author: thejacer87 <jacebennest87@gmail.com>
 homepage: https://gitlab.com/thejacer87/audiocutter
 
